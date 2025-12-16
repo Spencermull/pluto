@@ -4,6 +4,7 @@ import { useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "@/contexts/AuthContext";
 import NavBar from "@/components/NavBar";
+import NASAImageSearch from "@/components/NASAImageSearch";
 
 export default function HomePage() {
   const { user, loading } = useContext(AuthContext);
@@ -35,9 +36,10 @@ export default function HomePage() {
           <h1 className="text-4xl font-mono font-bold text-white uppercase tracking-wider mb-8">
             Welcome to PLUTO
           </h1>
-          <p className="text-white/80 font-sans text-lg">
+          <p className="text-white/80 font-sans text-lg mb-8">
             The Cosmic Browser
           </p>
+          <NASAImageSearch />
         </div>
       </main>
     </div>

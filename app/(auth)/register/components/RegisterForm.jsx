@@ -5,10 +5,11 @@ import { AuthContext } from "@/contexts/AuthContext";
 import Input from "@/components/Input";
 import ErrorMessage from "@/components/ErrorMessage";
 
-export default function LoginForm() {
+export default function RegisterForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { signIn } = useContext(AuthContext);
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const { signUp } = useContext(AuthContext);
   const [error, setError] = useState(null);
   const router = useRouter();
 
@@ -33,10 +34,15 @@ export default function LoginForm() {
       return false;
     }
     
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return false;
+    }
+    
     return true;
   };
 
-  const handleLogin = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     setError(null);
 
@@ -45,19 +51,20 @@ export default function LoginForm() {
     }
 
     try {
-      await signIn(email, password);
+      await signUp(email, password);
       router.push("/home");
     } catch (err) {
-      setError(err.message || "Login failed");
+      setError(err.message || "Registration failed");
     }
   };
+
   return (
     <div className="w-full max-w-md mx-auto border border-white/10 bg-black/30 p-8 transition-all duration-300">
       <h1 className="text-2xl font-mono font-bold text-white uppercase tracking-wider mb-8 text-center">
-        Sign In
+        Sign Up
       </h1>
 
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleRegister}>
         <ErrorMessage message={error} />
         <Input
           label="Email"
@@ -75,25 +82,34 @@ export default function LoginForm() {
           placeholder="Enter password"
         />
 
+        <Input
+          label="Confirm Password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          type="password"
+          placeholder="Confirm password"
+        />
+
         <button 
           type="submit"
           className="w-full mt-6 inline-flex items-center justify-center font-mono px-4 py-2.5 text-sm border border-white text-white bg-transparent transition-all duration-300 hover:bg-white hover:text-black hover:border-pink-500 hover:shadow-pink-glow active:bg-white active:text-black"
         >
-          SIGN IN
+          SIGN UP
         </button>
       </form>
       
       <div className="mt-6 text-center">
         <p className="text-white/60 font-mono text-sm mb-2">
-          Don't have an account?
+          Already have an account?
         </p>
         <button
-          onClick={() => router.push('/register')}
-          className="text-sm font-mono text-white/80 hover:text-blue-500 transition-colors underline"
+          onClick={() => router.push('/login')}
+          className="text-sm font-mono text-white/80 hover:text-green-500 transition-colors underline"
         >
-          Sign up here
+          Sign in here
         </button>
       </div>
     </div>
   );
 }
+
