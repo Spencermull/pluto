@@ -1,9 +1,9 @@
 "use client";
 /*
 TODOS: Once many search types are implemented I am going to organize them into something like filtering or tabs unsure as of now.
-
 */
 import { useState } from "react";
+import Link from "next/link";
 
 export default function NASAImageSearch() {
   const [query, setQuery] = useState("");
@@ -92,10 +92,15 @@ export default function NASAImageSearch() {
               const links = item.links && item.links[0] ? item.links[0] : {};
               
               return (
-                <div
+                <Link
                   // Use NASA ID as key if available, otherwise fall back to index
                   key={item.data?.[0]?.nasa_id || index}
-                  className="border border-white/10 bg-black/30 p-6"
+                  href={
+                    data.nasa_id
+                      ? `/object/${encodeURIComponent(data.nasa_id)}`
+                      : "#"
+                  }
+                  className="block border border-white/10 bg-black/30 p-6 hover:border-pink-500/60 transition-colors"
                 >
                   <div className="flex gap-6">
                     {/* Only render image if link exists */}
@@ -114,7 +119,7 @@ export default function NASAImageSearch() {
                       <h3 className="text-lg font-mono font-bold text-white mb-2">
                         {data.title || "N/A"}
                       </h3>
-                      <p className="text-white/80 font-sans text-sm mb-4">
+                      <p className="text-white/80 font-sans text-sm mb-4 line-clamp-3">
                         {data.description || "N/A"}
                       </p>
                       <div className="text-white/60 font-mono text-xs space-y-1">
@@ -134,7 +139,7 @@ export default function NASAImageSearch() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
