@@ -4,6 +4,7 @@ import { useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "@/contexts/AuthContext";
 import NavBar from "@/components/NavBar";
+import Footer from "@/components/Footer";
 import NASAImageSearch from "@/components/NASAImageSearch";
 
 export default function HomePage() {
@@ -29,9 +30,9 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black flex flex-col">
       <NavBar />
-      <main className="p-8">
+      <main className="p-8 flex-1">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl font-mono font-bold text-white uppercase tracking-wider mb-8">
             Welcome to PLUTO
@@ -42,6 +43,7 @@ export default function HomePage() {
           <NASAImageSearch />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

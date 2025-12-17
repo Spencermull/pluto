@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import NavBar from "@/components/NavBar";
+import Footer from "@/components/Footer";
 
 // Detail page for a single NASA object identified by nasa_id
 export default function ObjectDetailPage() {
@@ -57,9 +58,9 @@ export default function ObjectDetailPage() {
   const links = item && item.links && item.links[0] ? item.links[0] : {};
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black flex flex-col">
       <NavBar />
-      <main className="p-8">
+      <main className="p-8 flex-1">
         <div className="max-w-4xl mx-auto">
           <button
             onClick={() => router.back()}
@@ -137,6 +138,7 @@ export default function ObjectDetailPage() {
           )}
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

@@ -2,14 +2,15 @@
 
 import { useRouter } from "next/navigation";
 import NavBar from "@/components/NavBar";
+import Footer from "@/components/Footer";
 
 export default function LandingPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black flex flex-col">
       <NavBar />
-      <main className="p-8">
+      <main className="p-8 flex-1">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-6xl font-mono font-bold text-white uppercase tracking-wider mb-6">
             PLUTO
@@ -33,6 +34,7 @@ export default function LandingPage() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }
