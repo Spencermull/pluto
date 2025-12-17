@@ -36,6 +36,12 @@ export default function NavBar() {
                 HOME
               </button>
               <button
+                onClick={() => router.push("/profile")}
+                className="text-sm font-mono border-b border-transparent pb-1 transition-all duration-300 text-white/60 hover:text-blue-500 hover:border-blue-500/50 cursor-pointer"
+              >
+                PROFILE
+              </button>
+              <button
                 onClick={async () => {
                   try {
                     await signOut();
