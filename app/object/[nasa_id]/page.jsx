@@ -113,7 +113,7 @@ export default function ObjectDetailPage() {
       <main className="p-8 flex-1">
         <div className="max-w-4xl mx-auto">
           <button
-            onClick={() => router.back()}
+            onClick={() => router.push("/home?tab=search")}
             className="mb-8 text-sm font-mono text-white/60 hover:text-pink-500 transition-colors underline hover:no-underline"
           >
             ← Back
