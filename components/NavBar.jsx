@@ -12,7 +12,7 @@ export default function NavBar() {
       <div className="max-w-4xl mx-auto flex items-center justify-between">
         <Link
           href={user ? "/home" : "/"}
-          className="text-xl font-mono font-semibold text-white hover:text-white/80 transition-colors cursor-pointer"
+          className="text-2xl font-mono font-semibold text-white hover:text-white/80 transition-colors cursor-pointer"
         >
           PLUTO
         </Link>
@@ -22,19 +22,19 @@ export default function NavBar() {
             <>
               <Link
                 href="/home"
-                className="text-sm font-mono border-b border-transparent pb-1 transition-all duration-300 text-white/60 hover:text-pink-500 hover:border-pink-500/50 cursor-pointer"
+                className="text-base font-mono border-b border-transparent pb-1 transition-all duration-300 text-white/60 hover:text-pink-500 hover:border-pink-500/50 cursor-pointer"
               >
                 HOME
               </Link>
               <Link
                 href="/favorites"
-                className="text-sm font-mono border-b border-transparent pb-1 transition-all duration-300 text-white/60 hover:text-yellow-400 hover:border-yellow-400/50 cursor-pointer"
+                className="text-base font-mono border-b border-transparent pb-1 transition-all duration-300 text-white/60 hover:text-yellow-400 hover:border-yellow-400/50 cursor-pointer"
               >
                 FAVOURITES
               </Link>
               <Link
                 href="/profile"
-                className="text-sm font-mono border-b border-transparent pb-1 transition-all duration-300 text-white/60 hover:text-blue-500 hover:border-blue-500/50 cursor-pointer"
+                className="text-base font-mono border-b border-transparent pb-1 transition-all duration-300 text-white/60 hover:text-blue-500 hover:border-blue-500/50 cursor-pointer"
               >
                 PROFILE
               </Link>
@@ -46,7 +46,7 @@ export default function NavBar() {
                     console.error("Logout error:", error);
                   }
                 }}
-                className="text-sm font-mono border-b border-transparent pb-1 transition-all duration-300 text-white/60 hover:text-red-500 hover:border-red-500/50 cursor-pointer"
+                className="text-base font-mono border-b border-transparent pb-1 transition-all duration-300 text-white/60 hover:text-red-500 hover:border-red-500/50 cursor-pointer"
               >
                 LOGOUT
               </button>
@@ -56,7 +56,7 @@ export default function NavBar() {
           {!user && (
             <Link
               href="/login"
-              className="text-sm font-mono border-b border-transparent pb-1 transition-all duration-300 text-white/60 hover:text-green-500 hover:border-green-500/50 cursor-pointer"
+              className="text-base font-mono border-b border-transparent pb-1 transition-all duration-300 text-white/60 hover:text-green-500 hover:border-green-500/50 cursor-pointer"
             >
               LOGIN
             </Link>
@@ -65,7 +65,7 @@ export default function NavBar() {
           {!user && (
             <Link
               href="/register"
-              className="text-sm font-mono border-b border-transparent pb-1 transition-all duration-300 text-white/60 hover:text-blue-500 hover:border-blue-500/50 cursor-pointer"
+              className="text-base font-mono border-b border-transparent pb-1 transition-all duration-300 text-white/60 hover:text-blue-500 hover:border-blue-500/50 cursor-pointer"
             >
               REGISTER
             </Link>

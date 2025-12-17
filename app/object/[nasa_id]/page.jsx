@@ -113,7 +113,7 @@ export default function ObjectDetailPage() {
         <div className="max-w-4xl mx-auto">
           <button
             onClick={() => router.back()}
-            className="mb-6 text-sm font-mono text-white/60 hover:text-pink-500 transition-colors underline"
+            className="mb-8 text-sm font-mono text-white/60 hover:text-pink-500 transition-colors underline hover:no-underline"
           >
             ← Back
           </button>
@@ -136,58 +136,70 @@ export default function ObjectDetailPage() {
 
           {!loading && !error && item && (
             <>
-              <div className="border border-white/10 bg-black/30 p-6 mb-8">
-                <div className="flex flex-col md:flex-row gap-6">
+              <div className="border border-white/10 bg-black/30 backdrop-blur-sm p-8 mb-8 hover:border-pink-500/30 transition-colors duration-300">
+                <div className="flex flex-col md:flex-row gap-8">
                   {links.href && (
-                    <img
-                      src={links.href}
-                      alt={data.title || "NASA Image"}
-                      className="w-full md:w-72 h-72 object-cover border border-white/10"
-                      onError={(e) => {
-                        e.target.style.display = "none";
-                      }}
-                    />
+                    <div className="shrink-0">
+                      <img
+                        src={links.href}
+                        alt={data.title || "NASA Image"}
+                        className="w-full md:w-80 h-80 object-cover border border-white/10 shadow-lg"
+                        onError={(e) => {
+                          e.target.style.display = "none";
+                        }}
+                      />
+                    </div>
                   )}
 
-                  <div className="flex-1">
-                    <h1 className="text-3xl font-mono font-bold text-white uppercase tracking-wider mb-4">
+                  <div className="flex-1 min-w-0">
+                    <h1 className="text-3xl font-mono font-bold text-white uppercase tracking-wider mb-5 leading-tight">
                       {data.title || "N/A"}
                     </h1>
 
-                    <p className="text-white/80 font-sans text-sm mb-6 whitespace-pre-line">
-                      {data.description || "N/A"}
-                    </p>
+                    <div className="mb-6 pb-6 border-b border-white/10">
+                      <p className="text-white/80 font-sans text-sm leading-relaxed whitespace-pre-line">
+                        {data.description || "N/A"}
+                      </p>
+                    </div>
 
-                    <div className="text-white/60 font-mono text-xs space-y-2">
-                      <div>
-                        <span className="text-white/40">NASA ID: </span>
-                        {data.nasa_id || "N/A"}
+                    <div className="text-white/60 font-mono text-xs space-y-3">
+                      <div className="flex flex-wrap gap-x-4 gap-y-2">
+                        <div className="flex-1 min-w-50">
+                          <span className="text-white/40 block mb-1 text-[10px] uppercase tracking-wider">NASA ID</span>
+                          <span className="text-white/70">{data.nasa_id || "N/A"}</span>
+                        </div>
+                        <div className="flex-1 min-w-50">
+                          <span className="text-white/40 block mb-1 text-[10px] uppercase tracking-wider">Date</span>
+                          <span className="text-white/70">{data.date_created || "N/A"}</span>
+                        </div>
                       </div>
-                      <div>
-                        <span className="text-white/40">Date: </span>
-                        {data.date_created || "N/A"}
+                      <div className="flex flex-wrap gap-x-4 gap-y-2">
+                        {data.center && (
+                          <div className="flex-1 min-w-50">
+                            <span className="text-white/40 block mb-1 text-[10px] uppercase tracking-wider">Center</span>
+                            <span className="text-white/70">{data.center}</span>
+                          </div>
+                        )}
+                        {(data.photographer || data.secondary_creator) && (
+                          <div className="flex-1 min-w-50">
+                            <span className="text-white/40 block mb-1 text-[10px] uppercase tracking-wider">Photographer</span>
+                            <span className="text-white/70">{data.photographer || data.secondary_creator}</span>
+                          </div>
+                        )}
                       </div>
-                      <div>
-                        <span className="text-white/40">Center: </span>
-                        {data.center || "N/A"}
-                      </div>
-                      <div>
-                        <span className="text-white/40">Photographer: </span>
-                        {data.photographer || data.secondary_creator || "N/A"}
-                      </div>
-                      <div>
-                        <span className="text-white/40">Keywords: </span>
-                        {Array.isArray(data.keywords) && data.keywords.length > 0
-                          ? data.keywords.join(", ")
-                          : "N/A"}
-                      </div>
+                      {Array.isArray(data.keywords) && data.keywords.length > 0 && (
+                        <div>
+                          <span className="text-white/40 block mb-1 text-[10px] uppercase tracking-wider">Keywords</span>
+                          <span className="text-white/70">{data.keywords.join(", ")}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="border border-white/10 bg-black/20 p-6">
-                <h2 className="text-xl font-mono font-bold text-white uppercase tracking-wider mb-4">
+              <div className="border border-white/10 bg-black/20 backdrop-blur-sm p-8 hover:border-pink-500/30 transition-colors duration-300">
+                <h2 className="text-xl font-mono font-bold text-white uppercase tracking-wider mb-6 pb-3 border-b border-white/10">
                   Notes
                 </h2>
 
@@ -208,12 +220,12 @@ export default function ObjectDetailPage() {
                       value={notes}
                       onChange={(e) => setNotes(e.target.value)}
                       placeholder="Write your notes about this object..."
-                      className="w-full min-h-30 bg-black/40 border border-white/20 text-white font-mono text-sm p-3 mb-4 focus:outline-none focus:border-pink-500/60"
+                      className="w-full min-h-30 bg-black/40 border border-white/20 text-white font-mono text-sm p-4 mb-4 focus:outline-none focus:border-pink-500/60 focus:bg-black/50 transition-all duration-300 resize-y"
                     />
                     <button
                       onClick={handleSaveNotes}
                       disabled={notesSaving}
-                      className="px-6 py-2 font-mono text-sm border border-white text-white bg-transparent transition-all duration-300 hover:bg-white hover:text-black hover:border-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-6 py-2.5 font-mono text-sm border border-white/60 text-white bg-transparent transition-all duration-300 hover:bg-white hover:text-black hover:border-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {notesSaving ? "Saving..." : "Save Notes"}
                     </button>
