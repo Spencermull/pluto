@@ -15,9 +15,14 @@ export default function LandingPage() {
           <h1 className="text-6xl font-mono font-bold text-white uppercase tracking-wider mb-6">
             PLUTO
           </h1>
-          <p className="text-white/80 font-sans text-xl mb-12">
-            The Cosmic Browser
+          <p className="text-white/80 font-sans text-xl mb-8">
+            The Cosmic Browser - Explore NASA's planetary imagery
           </p>
+          <div className="text-white/60 font-mono text-sm mb-12 space-y-2">
+            <p>• Browse planet galleries</p>
+            <p>• Search NASA's image library</p>
+            <p>• View detailed object information</p>
+          </div>
           <div className="flex gap-4 justify-center">
             <button 
               onClick={() => router.push('/login')}

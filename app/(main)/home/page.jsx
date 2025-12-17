@@ -44,6 +44,7 @@ export default function HomePage() {
               The Cosmic Browser - Explore NASA's planetary imagery
             </p>
             
+            
             <div className="flex gap-4 border-b border-white/10">
               <button
                 onClick={() => setActiveTab("gallery")}

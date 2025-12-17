@@ -59,8 +59,61 @@ export default function NASAImageSearch() {
     }
   };
 
+  const suggestedSearches = ["mars", "jupiter", "saturn", "nebula", "galaxy", "astronaut"];
+
+  const handleSuggestedSearch = async (term) => {
+    setQuery(term);
+    setLoading(true);
+    setError(null);
+    setResults([]);
+    setCurrentPage(1);
+    setHasSearched(false);
+
+    try {
+      const response = await fetch(
+        `https://images-api.nasa.gov/search?q=${encodeURIComponent(term)}&media_type=image`
+      );
+      
+      if (!response.ok) {
+        throw new Error("Failed to fetch NASA images");
+      }
+
+      const data = await response.json();
+
+      if (data.collection && data.collection.items) {
+        setResults(data.collection.items);
+      } else {
+        setResults([]);
+      }
+      setHasSearched(true);
+    } catch (err) {
+      setError(err.message || "An error occurred");
+      setResults([]);
+      setHasSearched(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="w-full">
+      {!hasSearched && query === "" && (
+        <div className="mb-6 p-4 bg-black/30 border border-white/10">
+          <p className="text-white/60 font-mono text-sm mb-3">Try searching for:</p>
+          <div className="flex flex-wrap gap-2">
+            {suggestedSearches.map((term) => (
+              <button
+                key={term}
+                type="button"
+                onClick={() => handleSuggestedSearch(term)}
+                className="px-3 py-1 text-xs font-mono border border-white/20 text-white/60 hover:text-white hover:border-pink-500/50 bg-transparent transition-all"
+              >
+                {term}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       <form onSubmit={handleSearch} className="mb-8">
         <div className="flex gap-4">
           <input
