@@ -3,7 +3,7 @@
 import { createContext, useState, useEffect } from "react";
 
 import { signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword, signOut } from "firebase/auth";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 
 import { auth, db } from "@/app/utils/firebase";
 
@@ -20,9 +20,8 @@ export const AuthContextProvider = ({ children }) => {
 
     try {
       await setDoc(doc(db, "users", newUser.uid), {
-        email: newUser.email,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
+        email: newUser.email
+      
       });
     } catch (error) {
       console.error("Error creating user document:", error);
