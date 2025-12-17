@@ -36,28 +36,33 @@ export default function HomePage() {
       <NavBar />
       <main className="p-8 flex-1">
         <div className="max-w-6xl mx-auto">
-          <header className="mb-8">
-            <h1 className="text-4xl font-mono font-bold text-white uppercase tracking-wider mb-4">
-              Welcome to PLUTO
-            </h1>
-            <p className="text-white/80 font-sans text-lg mb-6">
-              The Cosmic Browser - Explore NASA's planetary imagery
-            </p>
-            
-            
-            <div className="flex gap-4 border-b border-white/10">
+          <header className="mb-10">
+            <div className="mb-6">
+              <h1 className="text-4xl font-mono font-bold text-white uppercase tracking-wider mb-3">
+                Welcome to PLUTO
+              </h1>
+              <p className="text-white/80 font-sans text-lg">
+                The Cosmic Browser – browse featured planetary imagery or search NASA&apos;s library.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-2 border-b border-white/10 pb-1 text-sm font-mono">
               <button
                 onClick={() => setActiveTab("gallery")}
-                className={`px-6 py-3 font-mono text-sm border-b-2 ${
-                  activeTab === "gallery" ? "border-pink-500 text-white" : "border-transparent text-white/60 hover:text-white"
+                className={`px-4 py-2 border-b-2 ${
+                  activeTab === "gallery"
+                    ? "border-pink-500 text-white"
+                    : "border-transparent text-white/60 hover:text-white"
                 }`}
               >
                 PLANET GALLERY
               </button>
               <button
                 onClick={() => setActiveTab("search")}
-                className={`px-6 py-3 font-mono text-sm border-b-2 ${
-                  activeTab === "search" ? "border-pink-500 text-white" : "border-transparent text-white/60 hover:text-white"
+                className={`px-4 py-2 border-b-2 ${
+                  activeTab === "search"
+                    ? "border-pink-500 text-white"
+                    : "border-transparent text-white/60 hover:text-white"
                 }`}
               >
                 SEARCH
@@ -65,9 +70,9 @@ export default function HomePage() {
             </div>
           </header>
 
-          <div className="mt-8">
+          <section className="mt-8">
             {activeTab === "gallery" ? <NASAImageGallery /> : <NASAImageSearch />}
-          </div>
+          </section>
         </div>
       </main>
       <Footer />

@@ -8,7 +8,7 @@ import { doc, setDoc, deleteDoc, onSnapshot, collection } from "firebase/firesto
 import { db } from "@/app/utils/firebase";
 import { AuthContext } from "@/contexts/AuthContext";
 
-const RESULTS_PER_PAGE = 20;
+const RESULTS_PER_PAGE = 10;
 
 export default function NASAImageSearch() {
   const [query, setQuery] = useState("");

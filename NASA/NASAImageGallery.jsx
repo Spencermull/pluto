@@ -6,11 +6,14 @@ import { doc, setDoc, deleteDoc, onSnapshot, collection } from "firebase/firesto
 import { db } from "@/app/utils/firebase";
 import { AuthContext } from "@/contexts/AuthContext";
 
+const GALLERY_RESULTS_PER_PAGE = 12;
+
 export default function NASAImageGallery() {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [favorites, setFavorites] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
   const { user } = useContext(AuthContext);
 
   useEffect(() => {
@@ -105,13 +108,26 @@ export default function NASAImageGallery() {
 
   return (
     <div className="w-full">
-      <h2 className="text-2xl font-mono font-bold text-white uppercase tracking-wider mb-6">
-        Planet Gallery
-      </h2>
+      <div className="flex items-baseline justify-between mb-4">
+        <h2 className="text-2xl font-mono font-bold text-white uppercase tracking-wider">
+          Planet Gallery
+        </h2>
+        {images.length > 0 && (
+          <p className="text-white/60 font-mono text-xs">
+            Page {currentPage} of {Math.ceil(images.length / GALLERY_RESULTS_PER_PAGE)}
+          </p>
+        )}
+      </div>
 
       {images.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {images.map((item, index) => {
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {images
+            .slice(
+              (currentPage - 1) * GALLERY_RESULTS_PER_PAGE,
+              currentPage * GALLERY_RESULTS_PER_PAGE
+            )
+            .map((item, index) => {
             const data = item.data && item.data[0] ? item.data[0] : {};
             const links = item.links && item.links[0] ? item.links[0] : {};
             const nasaId = data.nasa_id;
@@ -161,6 +177,31 @@ export default function NASAImageGallery() {
             );
           })}
         </div>
+
+        {images.length > GALLERY_RESULTS_PER_PAGE && (
+          <div className="flex items-center justify-center gap-4 mt-8">
+            <button
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+              disabled={currentPage === 1}
+              className="px-4 py-2 font-mono text-sm border border-white/10 text-white bg-transparent hover:bg-white hover:text-black hover:border-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+
+            <span className="text-white/60 font-mono text-sm">
+              Page {currentPage} of {Math.ceil(images.length / GALLERY_RESULTS_PER_PAGE)}
+            </span>
+
+            <button
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+              disabled={currentPage >= Math.ceil(images.length / GALLERY_RESULTS_PER_PAGE)}
+              className="px-4 py-2 font-mono text-sm border border-white/10 text-white bg-transparent hover:bg-white hover:text-black hover:border-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Next
+            </button>
+          </div>
+        )}
+        </>
       ) : (
         <div className="text-white/60 font-mono text-center py-8">
           No images found in gallery.
