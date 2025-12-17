@@ -2,8 +2,11 @@
 /*
 TODOS: Once many search types are implemented I am going to organize them into something like filtering or tabs unsure as of now.
 */
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import Link from "next/link";
+import { doc, setDoc, deleteDoc, onSnapshot, collection } from "firebase/firestore";
+import { db } from "@/app/utils/firebase";
+import { AuthContext } from "@/contexts/AuthContext";
 
 const RESULTS_PER_PAGE = 20;
 
@@ -14,6 +17,48 @@ export default function NASAImageSearch() {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasSearched, setHasSearched] = useState(false);
+  const [favorites, setFavorites] = useState({});
+  const { user } = useContext(AuthContext);
+
+  // Listen for favorites for the current user
+  useEffect(() => {
+    if (!user) {
+      setFavorites({});
+      return;
+    }
+
+    const favsRef = collection(db, "users", user.uid, "favorites");
+    const unsubscribe = onSnapshot(favsRef, (snapshot) => {
+      const favs = {};
+      snapshot.forEach((docSnap) => {
+        favs[docSnap.id] = true;
+      });
+      setFavorites(favs);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  const toggleFavorite = async (nasaId, data, links) => {
+    if (!user || !nasaId) return;
+
+    const favRef = doc(db, "users", user.uid, "favorites", nasaId);
+    const isFav = !!favorites[nasaId];
+
+    try {
+      if (isFav) {
+        await deleteDoc(favRef);
+      } else {
+        await setDoc(favRef, {
+          nasa_id: nasaId,
+          title: data.title || "N/A",
+          thumbnail: links?.href || null,
+        });
+      }
+    } catch (err) {
+      console.error("Error updating favorite:", err);
+    }
+  };
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -149,13 +194,30 @@ export default function NASAImageSearch() {
               const data = item.data?.[0] || {};
               const links = item.links?.[0] || {};
               const nasaId = data.nasa_id;
+              const isFavorite = !!favorites[nasaId];
               
               return (
                 <Link
                   key={nasaId || index}
                   href={nasaId ? `/object/${encodeURIComponent(nasaId)}` : "#"}
-                  className="block border border-white/10 bg-black/30 p-6 hover:border-pink-500/60 transition-colors"
+                  className="block border border-white/10 bg-black/30 p-6 hover:border-pink-500/60 transition-colors relative"
                 >
+                  {user && nasaId && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleFavorite(nasaId, data, links);
+                      }}
+                      className="absolute top-3 right-3 text-lg"
+                      aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+                    >
+                      <span className={isFavorite ? "text-yellow-400" : "text-white/30"}>
+                        {isFavorite ? "★" : "☆"}
+                      </span>
+                    </button>
+                  )}
                   <div className="flex gap-6">
                     {links.href && (
                       <img
