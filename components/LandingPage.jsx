@@ -1,12 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 
 export default function LandingPage() {
-  const router = useRouter();
-
   return (
     <div className="min-h-screen bg-black flex flex-col">
       <NavBar />
@@ -24,18 +22,18 @@ export default function LandingPage() {
             <p>• View detailed object information</p>
           </div>
           <div className="flex gap-4 justify-center">
-            <button 
-              onClick={() => router.push('/login')}
+            <Link
+              href="/login"
               className="px-8 py-3 font-mono text-sm border border-white text-white bg-transparent transition-all duration-300 hover:bg-white hover:text-black hover:border-pink-500"
             >
               SIGN IN
-            </button>
-            <button 
-              onClick={() => router.push('/register')}
+            </Link>
+            <Link
+              href="/register"
               className="px-8 py-3 font-mono text-sm border border-white text-white bg-transparent transition-all duration-300 hover:bg-white hover:text-black hover:border-blue-500"
             >
               SIGN UP
-            </button>
+            </Link>
           </div>
         </div>
       </main>
