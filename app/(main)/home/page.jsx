@@ -1,7 +1,7 @@
 "use client";
 
 // TODO: Continue UI redesign 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthContext } from "@/contexts/AuthContext";
 import NavBar from "@/components/NavBar";
@@ -9,16 +9,52 @@ import Footer from "@/components/Footer";
 import NASAImageSearch from "@/NASA/NASAImageSearch";
 import NASAImageGallery from "@/NASA/NASAImageGallery";
 
+function TabControls({ activeTab, setActiveTab }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const t = searchParams?.get("tab");
+    if (t === "search" || t === "gallery") setActiveTab(t);
+  }, [searchParams, setActiveTab]);
+
+  return (
+    <div className="flex flex-wrap gap-2 border-b border-white/10 pb-1 text-sm font-mono">
+      <button
+        onClick={() => {
+          setActiveTab("gallery");
+          router.replace("/home?tab=gallery");
+        }}
+        className={`px-4 py-2 border-b-2 transition-all duration-200 ${
+          activeTab === "gallery"
+            ? "border-pink-500 text-white"
+            : "border-transparent text-white/60 hover:text-white hover:border-pink-500/30"
+        }`}
+      >
+        PLANET GALLERY
+      </button>
+      <button
+        onClick={() => {
+          setActiveTab("search");
+          router.replace("/home?tab=search");
+        }}
+        className={`px-4 py-2 border-b-2 transition-all duration-200 ${
+          activeTab === "search"
+            ? "border-pink-500 text-white"
+            : "border-transparent text-white/60 hover:text-white hover:border-pink-500/30"
+        }`}
+      >
+        SEARCH
+      </button>
+    </div>
+  );
+}
+
 
 export default function HomePage() {
   const { user, loading } = useContext(AuthContext);
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("gallery");
-  const searchParams = useSearchParams();
-  useEffect(()=>{
-    const t = searchParams?.get("tab");
-    if(t === "search" || t === "gallery") setActiveTab(t);
-  },[searchParams])
 
   useEffect(() => {
     if (!loading && !user) {
@@ -53,28 +89,9 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-2 border-b border-white/10 pb-1 text-sm font-mono">
-              <button
-                onClick={() => { setActiveTab("gallery"); router.replace("/home?tab=gallery"); }}
-                className={`px-4 py-2 border-b-2 transition-all duration-200 ${
-                  activeTab === "gallery"
-                    ? "border-pink-500 text-white"
-                    : "border-transparent text-white/60 hover:text-white hover:border-pink-500/30"
-                }`}
-              >
-                PLANET GALLERY
-              </button>
-              <button
-                onClick={() => { setActiveTab("search"); router.replace("/home?tab=search"); }}
-                className={`px-4 py-2 border-b-2 transition-all duration-200 ${
-                  activeTab === "search"
-                    ? "border-pink-500 text-white"
-                    : "border-transparent text-white/60 hover:text-white hover:border-pink-500/30"
-                }`}
-              >
-                SEARCH
-              </button>
-            </div>
+            <Suspense fallback={<div className="h-10" />}>
+              <TabControls activeTab={activeTab} setActiveTab={setActiveTab} />
+            </Suspense>
           </header>
 
           <section className="mt-8">
