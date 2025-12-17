@@ -19,6 +19,13 @@ export default function NASAImageSearch() {
   const [hasSearched, setHasSearched] = useState(false);
   const [favorites, setFavorites] = useState({});
   const [notesMap, setNotesMap] = useState({});
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState({
+    yearStart: "",
+    yearEnd: "",
+    center: "",
+    sortBy: "relevance"
+  });
   const { user } = useContext(AuthContext);
 
   // Listen for favorites for the current user
@@ -68,15 +75,47 @@ export default function NASAImageSearch() {
     }
   };
 
+  const buildSearchUrl = (searchQuery) => {
+    let url = `https://images-api.nasa.gov/search?q=${encodeURIComponent(searchQuery)}&media_type=image`;
+    
+    if (filters.yearStart) {
+      url += `&year_start=${filters.yearStart}`;
+    }
+    if (filters.yearEnd) {
+      url += `&year_end=${filters.yearEnd}`;
+    }
+    if (filters.center) {
+      url += `&center=${encodeURIComponent(filters.center)}`;
+    }
+    
+    return url;
+  };
+
+  const sortResults = (items) => {
+    if (filters.sortBy === "date") {
+      return [...items].sort((a, b) => {
+        const dateA = a.data?.[0]?.date_created || "";
+        const dateB = b.data?.[0]?.date_created || "";
+        return dateB.localeCompare(dateA); // newest first
+      });
+    } else if (filters.sortBy === "title") {
+      return [...items].sort((a, b) => {
+        const titleA = a.data?.[0]?.title || "";
+        const titleB = b.data?.[0]?.title || "";
+        return titleA.localeCompare(titleB);
+      });
+    }
+    // Default return for termless items
+    return items;
+  };
+
   const handleSearch = async (e) => {
     e.preventDefault();
     
-    // Prevent empty searches
     if (!query.trim()) {
       return;
     }
 
-    // Reset state for new search
     setLoading(true);
     setError(null);
     setResults([]);
@@ -84,21 +123,19 @@ export default function NASAImageSearch() {
     setHasSearched(false);
 
     try {
-      // Fetch from NASA Image API 
-      const response = await fetch(
-        `https://images-api.nasa.gov/search?q=${encodeURIComponent(query)}&media_type=image`
-      );
+      const url = buildSearchUrl(query);
+      // console.log("Searching with URL:", url); // debugging
+      const response = await fetch(url);
       
       if (!response.ok) {
         throw new Error("Failed to fetch NASA images");
       }
 
       const data = await response.json();
-      
 
-      // Checks if collection and items exist before setting results
       if (data.collection && data.collection.items) {
-        setResults(data.collection.items);
+        const sorted = sortResults(data.collection.items);
+        setResults(sorted);
       } else {
         setResults([]);
       }
@@ -123,9 +160,8 @@ export default function NASAImageSearch() {
     setHasSearched(false);
 
     try {
-      const response = await fetch(
-        `https://images-api.nasa.gov/search?q=${encodeURIComponent(term)}&media_type=image`
-      );
+      const url = buildSearchUrl(term);
+      const response = await fetch(url);
       
       if (!response.ok) {
         throw new Error("Failed to fetch NASA images");
@@ -134,7 +170,8 @@ export default function NASAImageSearch() {
       const data = await response.json();
 
       if (data.collection && data.collection.items) {
-        setResults(data.collection.items);
+        const sorted = sortResults(data.collection.items);
+        setResults(sorted);
       } else {
         setResults([]);
       }
@@ -168,7 +205,7 @@ export default function NASAImageSearch() {
         </div>
       )}
       <form onSubmit={handleSearch} className="mb-8">
-        <div className="flex gap-4">
+        <div className="flex gap-4 mb-4">
           <input
             type="text"
             value={query}
@@ -183,7 +220,77 @@ export default function NASAImageSearch() {
           >
             {loading ? "SEARCHING..." : "SEARCH"}
           </button>
+          <button
+            type="button"
+            onClick={() => setShowFilters(!showFilters)}
+            className="px-4 py-2.5 font-mono text-sm border border-white/30 text-white/80 bg-transparent transition-all duration-200 hover:bg-white/10 hover:border-pink-500/50"
+          >
+            {showFilters ? "HIDE FILTERS" : "FILTERS"}
+          </button>
         </div>
+
+        {showFilters && (
+          <div className="border border-white/10 bg-black/30 p-6 mb-4">
+            <h3 className="text-sm font-mono font-bold text-white uppercase tracking-wider mb-4">Advanced Filters</h3>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-white/40 font-mono text-xs uppercase tracking-wider mb-2">Start Year</label>
+                <input
+                  type="number"
+                  value={filters.yearStart}
+                  onChange={(e) => setFilters({ ...filters, yearStart: e.target.value })}
+                  placeholder="e.g. 2020"
+                  min="1900"
+                  max={new Date().getFullYear()}
+                  className="w-full px-3 py-2 bg-black/50 border border-white/10 text-white placeholder-white/40 font-mono text-sm focus:outline-none focus:border-pink-500/50"
+                />
+              </div>
+              <div>
+                <label className="block text-white/40 font-mono text-xs uppercase tracking-wider mb-2">End Year</label>
+                <input
+                  type="number"
+                  value={filters.yearEnd}
+                  onChange={(e) => setFilters({ ...filters, yearEnd: e.target.value })}
+                  placeholder="e.g. 2024"
+                  min="1900"
+                  max={new Date().getFullYear()}
+                  className="w-full px-3 py-2 bg-black/50 border border-white/10 text-white placeholder-white/40 font-mono text-sm focus:outline-none focus:border-pink-500/50"
+                />
+              </div>
+              <div>
+                <label className="block text-white/40 font-mono text-xs uppercase tracking-wider mb-2">Center</label>
+                <input
+                  type="text"
+                  value={filters.center}
+                  onChange={(e) => setFilters({ ...filters, center: e.target.value })}
+                  placeholder="e.g. JPL, GSFC"
+                  className="w-full px-3 py-2 bg-black/50 border border-white/10 text-white placeholder-white/40 font-mono text-sm focus:outline-none focus:border-pink-500/50"
+                />
+              </div>
+              <div>
+                <label className="block text-white/40 font-mono text-xs uppercase tracking-wider mb-2">Sort By</label>
+                <select
+                  value={filters.sortBy}
+                  onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}
+                  className="w-full px-3 py-2 bg-black/50 border border-white/10 text-white font-mono text-sm focus:outline-none focus:border-pink-500/50"
+                >
+                  <option value="relevance">Relevance</option>
+                  <option value="date">Date (Newest)</option>
+                  <option value="title">Title (A-Z)</option>
+                </select>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                setFilters({ yearStart: "", yearEnd: "", center: "", sortBy: "relevance" });
+              }}
+              className="mt-4 px-4 py-2 font-mono text-xs border border-white/20 text-white/60 hover:text-white hover:border-pink-500/50 bg-transparent transition-all duration-200"
+            >
+              Clear Filters
+            </button>
+          </div>
+        )}
       </form>
 
       {error && (

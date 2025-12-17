@@ -80,8 +80,9 @@ export default function ObjectDetailPage() {
         } else {
           setNotes("");
         }
-      } catch {
-        
+      } catch (err) {
+        // Silently fail for now, might add error handling but probably not
+        console.log("Note load error:", err);
       } finally {
         setNotesLoading(false);
       }

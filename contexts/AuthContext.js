@@ -17,15 +17,15 @@ export const AuthContextProvider = ({ children }) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const newUser = userCredential.user;
     
-
+    // Create user doc in firestore
     try {
       await setDoc(doc(db, "users", newUser.uid), {
         email: newUser.email
-      
+        // TODO: maybe add createdAt timestamp later
       });
     } catch (error) {
       console.error("Error creating user document:", error);
-      
+      // Continue anyway auth still works
     }
     
     setUser(newUser);

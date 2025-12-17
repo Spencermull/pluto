@@ -18,6 +18,7 @@ export default function LoginForm() {
       return false;
     }
     
+    // Basic email validation could use regex but this works for the purpose
     if (!email.includes("@") || !email.includes(".")) {
       setError("Please enter a valid email address");
       return false;
