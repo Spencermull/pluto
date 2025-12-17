@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Pluto: The NASA Space Search Engine
 
-## Getting Started
+Pluto is a NASA space search engine that allows users to explore NASA’s open source data through search, filtering, and user-based features.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Login / Authentication
+- Uses Firebase to authenticate users  
+- Firestore stores user data and pulls it into the relevant pages (persistent sessions)  
+- Users can register using email and password (minimal security for first release)  
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Search Objects / Images
+- Uses NASA's collection of open source APIs to display search results  
+- Users can filter by start date, end date, and which space station the image was taken from  
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Image Gallery
+- Displays all NASA images tagged or containing the word planet  
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Favouriting Entries
+- Users can tag searches as favourites  
+- Stored in Firestore and can be viewed in the favorites tab or in the profile tab  
 
-## Learn More
+### User Notes
+- Users can select entries and write notes in the notes section  
+- Uses Firestore to cache notes and pull when needed  
+- Entries with notes are tagged with note  
 
-To learn more about Next.js, take a look at the following resources:
+### Dark Mode
+- The app is styled in Tailwind CSS with a dark mode for a space theme  
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Technology Stack
+- Next.js  
+- Tailwind CSS  
+- Firebase Authentication  
+- Firebase Firestore  
+- NASA APIs  
+  - Solar System Objects  
+  - Images Library  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## How to use 
 
-## Deploy on Vercel
+- Go to https://pluto-rouge.vercel.app/
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
