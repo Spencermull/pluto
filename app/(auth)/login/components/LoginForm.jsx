@@ -28,11 +28,21 @@ export default function LoginForm() {
       return false;
     }
     
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
+    if (password.length < 12) {
+      setError("Password must be at least 12 characters");
       return false;
     }
-    
+
+    if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+      setError("Password must contain at least one special character");
+      return false;
+    }
+
+    if (!/[A-Z]/.test(password)) {
+      setError("Password must contain at least one upper case letter");
+      return false;
+    }
+
     return true;
   };
 
