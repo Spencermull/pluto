@@ -1,5 +1,6 @@
 "use client";
 
+// TODO: Replace <a> tags with Next.js Link components for better client-side navigation
 import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { collection, onSnapshot } from "firebase/firestore";
@@ -75,13 +76,13 @@ export default function FavoritesPage() {
                 <a
                   key={fav.id}
                   href={`/object/${encodeURIComponent(fav.id)}`}
-                  className="border border-white/10 bg-black/30 hover:border-pink-500/50 transition-all duration-300 overflow-hidden block"
+                  className="border border-white/10 bg-black/30 hover:border-pink-500/50 hover:scale-[1.02] transition-all duration-200 overflow-hidden block group"
                 >
                   {fav.thumbnail && (
                     <img
                       src={fav.thumbnail}
                       alt={fav.title || "Favourite image"}
-                      className="w-full h-48 object-cover"
+                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                       onError={(e) => {
                         e.target.style.display = "none";
                       }}

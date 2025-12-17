@@ -1,5 +1,6 @@
 "use client";
 
+// TODO: Standardize transition durations to 200ms to match the rest of the app 
 import { useContext } from "react";
 import Link from "next/link";
 import { AuthContext } from "@/contexts/AuthContext";

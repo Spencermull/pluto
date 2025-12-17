@@ -165,7 +165,7 @@ export default function NASAImageSearch() {
                 key={term}
                 type="button"
                 onClick={() => handleSuggestedSearch(term)}
-                className="px-3 py-1 text-xs font-mono border border-white/20 text-white/60 hover:text-white hover:border-pink-500/50 bg-transparent transition-all"
+                className="px-3 py-1 text-xs font-mono border border-white/20 text-white/60 hover:text-white hover:border-pink-500/50 hover:scale-105 bg-transparent transition-all duration-200"
               >
                 {term}
               </button>
@@ -185,7 +185,7 @@ export default function NASAImageSearch() {
           <button
             type="submit"
             disabled={loading}
-            className="px-8 py-2.5 font-mono text-sm border border-white text-white bg-transparent transition-all duration-300 hover:bg-white hover:text-black hover:border-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-8 py-2.5 font-mono text-sm border border-white text-white bg-transparent transition-all duration-200 hover:bg-white hover:text-black hover:border-pink-500 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "SEARCHING..." : "SEARCH"}
           </button>
@@ -215,7 +215,7 @@ export default function NASAImageSearch() {
                 <Link
                   key={nasaId || index}
                   href={nasaId ? `/object/${encodeURIComponent(nasaId)}` : "#"}
-                  className="block border border-white/10 bg-black/30 p-6 hover:border-pink-500/60 transition-colors relative"
+                  className="block border border-white/10 bg-black/30 p-6 hover:border-pink-500/60 hover:scale-[1.01] transition-all duration-200 relative group"
                 >
                   {user && hasNotes && (
                     <div className="absolute top-3 left-3 text-xs font-mono px-2 py-1 border border-blue-400/60 text-blue-300 bg-black/60">
@@ -230,10 +230,10 @@ export default function NASAImageSearch() {
                         e.stopPropagation();
                         toggleFavorite(nasaId, data, links);
                       }}
-                      className="absolute top-3 right-3 text-lg"
+                      className="absolute top-3 right-3 text-lg hover:scale-110 transition-transform duration-200 z-10"
                       aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
                     >
-                      <span className={isFavorite ? "text-yellow-400" : "text-white/30"}>
+                      <span className={`${isFavorite ? "text-yellow-400" : "text-white/30"} group-hover:text-yellow-400 transition-colors duration-200`}>
                         {isFavorite ? "★" : "☆"}
                       </span>
                     </button>
@@ -243,7 +243,7 @@ export default function NASAImageSearch() {
                       <img
                         src={links.href}
                         alt={data.title || "NASA Image"}
-                        className="w-48 h-48 object-cover border border-white/10"
+                        className="w-48 h-48 object-cover border border-white/10 group-hover:scale-105 transition-transform duration-300"
                         onError={(e) => e.target.style.display = "none"}
                       />
                     )}
@@ -281,7 +281,7 @@ export default function NASAImageSearch() {
               <button
                 onClick={() => setCurrentPage(prev => prev - 1)}
                 disabled={currentPage === 1}
-                className="px-4 py-2 font-mono text-sm border border-white/10 text-white bg-transparent hover:bg-white hover:text-black hover:border-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 font-mono text-sm border border-white/10 text-white bg-transparent hover:bg-white hover:text-black hover:border-pink-500 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               >
                 Previous
               </button>
@@ -293,7 +293,7 @@ export default function NASAImageSearch() {
               <button
                 onClick={() => setCurrentPage(prev => prev + 1)}
                 disabled={currentPage >= Math.ceil(results.length / RESULTS_PER_PAGE)}
-                className="px-4 py-2 font-mono text-sm border border-white/10 text-white bg-transparent hover:bg-white hover:text-black hover:border-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 font-mono text-sm border border-white/10 text-white bg-transparent hover:bg-white hover:text-black hover:border-pink-500 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
               >
                 Next
               </button>

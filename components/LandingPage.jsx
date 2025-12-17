@@ -21,13 +21,13 @@ export default function LandingPage() {
               <div className="flex gap-4 justify-center md:justify-start">
                 <Link
                   href="/login"
-                  className="px-8 py-3 font-mono text-sm border border-white text-white bg-transparent transition-all duration-300 hover:bg-white hover:text-black hover:border-pink-500"
+                  className="px-8 py-3 font-mono text-sm border border-white text-white bg-transparent transition-all duration-200 hover:bg-white hover:text-black hover:border-pink-500 hover:scale-105"
                 >
                   SIGN IN
                 </Link>
                 <Link
                   href="/register"
-                  className="px-8 py-3 font-mono text-sm border border-white text-white bg-transparent transition-all duration-300 hover:bg-white hover:text-black hover:border-blue-500"
+                  className="px-8 py-3 font-mono text-sm border border-white text-white bg-transparent transition-all duration-200 hover:bg-white hover:text-black hover:border-blue-500 hover:scale-105"
                 >
                   SIGN UP
                 </Link>

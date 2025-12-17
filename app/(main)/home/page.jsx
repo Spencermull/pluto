@@ -1,5 +1,6 @@
 "use client";
 
+// TODO: Continue UI redesign 
 import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthContext } from "@/contexts/AuthContext";
@@ -49,20 +50,20 @@ export default function HomePage() {
             <div className="flex flex-wrap gap-2 border-b border-white/10 pb-1 text-sm font-mono">
               <button
                 onClick={() => setActiveTab("gallery")}
-                className={`px-4 py-2 border-b-2 ${
+                className={`px-4 py-2 border-b-2 transition-all duration-200 ${
                   activeTab === "gallery"
                     ? "border-pink-500 text-white"
-                    : "border-transparent text-white/60 hover:text-white"
+                    : "border-transparent text-white/60 hover:text-white hover:border-pink-500/30"
                 }`}
               >
                 PLANET GALLERY
               </button>
               <button
                 onClick={() => setActiveTab("search")}
-                className={`px-4 py-2 border-b-2 ${
+                className={`px-4 py-2 border-b-2 transition-all duration-200 ${
                   activeTab === "search"
                     ? "border-pink-500 text-white"
-                    : "border-transparent text-white/60 hover:text-white"
+                    : "border-transparent text-white/60 hover:text-white hover:border-pink-500/30"
                 }`}
               >
                 SEARCH

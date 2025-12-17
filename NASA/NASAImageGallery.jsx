@@ -1,5 +1,6 @@
 "use client";
 
+// TODO: Maybe add filtering by planet type or date range later
 import { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import { doc, setDoc, deleteDoc, onSnapshot, collection } from "firebase/firestore";
@@ -137,7 +138,7 @@ export default function NASAImageGallery() {
               <Link
                 key={nasaId || index}
                 href={`/object/${encodeURIComponent(nasaId)}`}
-                className="border border-white/10 bg-black/30 hover:border-pink-500/50 transition-all duration-300 overflow-hidden relative"
+                className="border border-white/10 bg-black/30 hover:border-pink-500/50 hover:scale-[1.02] transition-all duration-200 overflow-hidden relative group"
               >
                 {user && nasaId && (
                   <button
@@ -147,10 +148,10 @@ export default function NASAImageGallery() {
                       e.stopPropagation();
                       toggleFavorite(nasaId, data, links);
                     }}
-                    className="absolute top-3 right-3 text-lg z-10"
+                    className="absolute top-3 right-3 text-lg z-10 hover:scale-110 transition-transform duration-200"
                     aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
                   >
-                    <span className={isFavorite ? "text-yellow-400" : "text-white/30"}>
+                    <span className={`${isFavorite ? "text-yellow-400" : "text-white/30"} group-hover:text-yellow-400 transition-colors duration-200`}>
                       {isFavorite ? "★" : "☆"}
                     </span>
                   </button>
@@ -159,7 +160,7 @@ export default function NASAImageGallery() {
                   <img
                     src={links.href}
                     alt={data.title || "NASA Image"}
-                    className="w-full h-48 object-cover"
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
                       e.target.style.display = "none";
                     }}
@@ -183,7 +184,7 @@ export default function NASAImageGallery() {
             <button
               onClick={() => setCurrentPage((prev) => prev - 1)}
               disabled={currentPage === 1}
-              className="px-4 py-2 font-mono text-sm border border-white/10 text-white bg-transparent hover:bg-white hover:text-black hover:border-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 font-mono text-sm border border-white/10 text-white bg-transparent hover:bg-white hover:text-black hover:border-pink-500 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
               Previous
             </button>
@@ -195,7 +196,7 @@ export default function NASAImageGallery() {
             <button
               onClick={() => setCurrentPage((prev) => prev + 1)}
               disabled={currentPage >= Math.ceil(images.length / GALLERY_RESULTS_PER_PAGE)}
-              className="px-4 py-2 font-mono text-sm border border-white/10 text-white bg-transparent hover:bg-white hover:text-black hover:border-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-2 font-mono text-sm border border-white/10 text-white bg-transparent hover:bg-white hover:text-black hover:border-pink-500 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
             >
               Next
             </button>
