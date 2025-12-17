@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { AuthContext } from "@/contexts/AuthContext";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
-import NASAImageSearch from "@/components/NASAImageSearch";
+import NASAImageSearch from "@/NASA/NASAImageSearch";
 
 export default function HomePage() {
   const { user, loading } = useContext(AuthContext);
