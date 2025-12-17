@@ -13,6 +13,7 @@ export default function NASAImageSearch() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -27,6 +28,7 @@ export default function NASAImageSearch() {
     setError(null);
     setResults([]);
     setCurrentPage(1);
+    setHasSearched(false);
 
     try {
       // Fetch from NASA Image API 
@@ -47,11 +49,12 @@ export default function NASAImageSearch() {
       } else {
         setResults([]);
       }
+      setHasSearched(true);
     } catch (err) {
       setError(err.message || "An error occurred");
       setResults([]);
+      setHasSearched(true);
     } finally {
-      
       setLoading(false);
     }
   };
@@ -164,8 +167,8 @@ export default function NASAImageSearch() {
         </div>
       )}
 
-      {/* Show "no results" message only when search is complete, no results, query exists, and no error */}
-      {!loading && results.length === 0 && query && !error && (
+   
+      {!loading && hasSearched && results.length === 0 && !error && (
         <div className="text-white/60 font-mono text-center py-8">
           No results found. Try a different search term.
         </div>
