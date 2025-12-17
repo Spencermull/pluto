@@ -34,8 +34,7 @@ export default function FavoritesPage() {
     const unsubscribe = onSnapshot(
       favsRef,
       (snapshot) => {
-        const items = [];
-        snapshot.forEach((doc) => items.push({ id: doc.id, ...doc.data() }));
+        const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         setFavorites(items);
         setFavLoading(false);
       },

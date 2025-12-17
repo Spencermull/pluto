@@ -31,19 +31,13 @@ export default function NASAImageSearch() {
 
     const favsRef = collection(db, "users", user.uid, "favorites");
     const unsubFavs = onSnapshot(favsRef, (snapshot) => {
-      const favs = {};
-      snapshot.forEach((docSnap) => {
-        favs[docSnap.id] = true;
-      });
+      const favs = Object.fromEntries(snapshot.docs.map((docSnap) => [docSnap.id, true]));
       setFavorites(favs);
     });
 
     const notesRef = collection(db, "users", user.uid, "notes");
     const unsubNotes = onSnapshot(notesRef, (snapshot) => {
-      const notes = {};
-      snapshot.forEach((docSnap) => {
-        notes[docSnap.id] = true;
-      });
+      const notes = Object.fromEntries(snapshot.docs.map((docSnap) => [docSnap.id, true]));
       setNotesMap(notes);
     });
 

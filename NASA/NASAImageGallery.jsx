@@ -60,10 +60,7 @@ export default function NASAImageGallery() {
 
     const favsRef = collection(db, "users", user.uid, "favorites");
     const unsubscribe = onSnapshot(favsRef, (snapshot) => {
-      const favs = {};
-      snapshot.forEach((docSnap) => {
-        favs[docSnap.id] = true;
-      });
+      const favs = Object.fromEntries(snapshot.docs.map((docSnap) => [docSnap.id, true]));
       setFavorites(favs);
     });
 
