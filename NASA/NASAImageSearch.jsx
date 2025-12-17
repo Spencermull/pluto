@@ -5,11 +5,14 @@ TODOS: Once many search types are implemented I am going to organize them into s
 import { useState } from "react";
 import Link from "next/link";
 
+const RESULTS_PER_PAGE = 20;
+
 export default function NASAImageSearch() {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleSearch = async (e) => {
     e.preventDefault();
@@ -23,6 +26,7 @@ export default function NASAImageSearch() {
     setLoading(true);
     setError(null);
     setResults([]);
+    setCurrentPage(1);
 
     try {
       // Fetch from NASA Image API 
@@ -85,34 +89,24 @@ export default function NASAImageSearch() {
             Results ({results.length})
           </h2>
           <div className="space-y-6">
-            {results.map((item, index) => {
-              // NASA API returns each item with data and links as arrays
-              // Extract first element from each array, or use empty object as fallback
-              const data = item.data && item.data[0] ? item.data[0] : {};
-              const links = item.links && item.links[0] ? item.links[0] : {};
+            {results.slice((currentPage - 1) * RESULTS_PER_PAGE, currentPage * RESULTS_PER_PAGE).map((item, index) => {
+              const data = item.data?.[0] || {};
+              const links = item.links?.[0] || {};
+              const nasaId = data.nasa_id;
               
               return (
                 <Link
-                  // Use NASA ID as key if available, otherwise fall back to index
-                  key={item.data?.[0]?.nasa_id || index}
-                  href={
-                    data.nasa_id
-                      ? `/object/${encodeURIComponent(data.nasa_id)}`
-                      : "#"
-                  }
+                  key={nasaId || index}
+                  href={nasaId ? `/object/${encodeURIComponent(nasaId)}` : "#"}
                   className="block border border-white/10 bg-black/30 p-6 hover:border-pink-500/60 transition-colors"
                 >
                   <div className="flex gap-6">
-                    {/* Only render image if link exists */}
                     {links.href && (
                       <img
                         src={links.href}
                         alt={data.title || "NASA Image"}
                         className="w-48 h-48 object-cover border border-white/10"
-                        // Hide image if it fails to load 
-                        onError={(e) => {
-                          e.target.style.display = "none";
-                        }}
+                        onError={(e) => e.target.style.display = "none"}
                       />
                     )}
                     <div className="flex-1">
@@ -131,7 +125,6 @@ export default function NASAImageSearch() {
                           <span className="text-white/40">Date: </span>
                           {data.date_created || "N/A"}
                         </div>
-                        {/* Try photographer first, then secondary_creator, then "N/A" */}
                         <div>
                           <span className="text-white/40">Photographer: </span>
                           {data.photographer || data.secondary_creator || "N/A"}
@@ -143,6 +136,31 @@ export default function NASAImageSearch() {
               );
             })}
           </div>
+          
+          {/* Pagination */}
+          {results.length > RESULTS_PER_PAGE && (
+            <div className="flex items-center justify-center gap-4 mt-8">
+              <button
+                onClick={() => setCurrentPage(prev => prev - 1)}
+                disabled={currentPage === 1}
+                className="px-4 py-2 font-mono text-sm border border-white/10 text-white bg-transparent hover:bg-white hover:text-black hover:border-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+              
+              <span className="text-white/60 font-mono text-sm">
+                Page {currentPage} of {Math.ceil(results.length / RESULTS_PER_PAGE)}
+              </span>
+              
+              <button
+                onClick={() => setCurrentPage(prev => prev + 1)}
+                disabled={currentPage >= Math.ceil(results.length / RESULTS_PER_PAGE)}
+                className="px-4 py-2 font-mono text-sm border border-white/10 text-white bg-transparent hover:bg-white hover:text-black hover:border-pink-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       )}
 
