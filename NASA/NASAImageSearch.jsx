@@ -18,17 +18,19 @@ export default function NASAImageSearch() {
   const [currentPage, setCurrentPage] = useState(1);
   const [hasSearched, setHasSearched] = useState(false);
   const [favorites, setFavorites] = useState({});
+  const [notesMap, setNotesMap] = useState({});
   const { user } = useContext(AuthContext);
 
   // Listen for favorites for the current user
   useEffect(() => {
     if (!user) {
       setFavorites({});
+      setNotesMap({});
       return;
     }
 
     const favsRef = collection(db, "users", user.uid, "favorites");
-    const unsubscribe = onSnapshot(favsRef, (snapshot) => {
+    const unsubFavs = onSnapshot(favsRef, (snapshot) => {
       const favs = {};
       snapshot.forEach((docSnap) => {
         favs[docSnap.id] = true;
@@ -36,7 +38,19 @@ export default function NASAImageSearch() {
       setFavorites(favs);
     });
 
-    return () => unsubscribe();
+    const notesRef = collection(db, "users", user.uid, "notes");
+    const unsubNotes = onSnapshot(notesRef, (snapshot) => {
+      const notes = {};
+      snapshot.forEach((docSnap) => {
+        notes[docSnap.id] = true;
+      });
+      setNotesMap(notes);
+    });
+
+    return () => {
+      unsubFavs();
+      unsubNotes();
+    };
   }, [user]);
 
   const toggleFavorite = async (nasaId, data, links) => {
@@ -195,6 +209,7 @@ export default function NASAImageSearch() {
               const links = item.links?.[0] || {};
               const nasaId = data.nasa_id;
               const isFavorite = !!favorites[nasaId];
+              const hasNotes = !!notesMap[nasaId];
               
               return (
                 <Link
@@ -202,6 +217,11 @@ export default function NASAImageSearch() {
                   href={nasaId ? `/object/${encodeURIComponent(nasaId)}` : "#"}
                   className="block border border-white/10 bg-black/30 p-6 hover:border-pink-500/60 transition-colors relative"
                 >
+                  {user && hasNotes && (
+                    <div className="absolute top-3 left-3 text-xs font-mono px-2 py-1 border border-blue-400/60 text-blue-300 bg-black/60">
+                      NOTES
+                    </div>
+                  )}
                   {user && nasaId && (
                     <button
                       type="button"
