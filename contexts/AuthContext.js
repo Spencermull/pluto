@@ -3,8 +3,9 @@
 import { createContext, useState, useEffect } from "react";
 
 import { signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword, signOut } from "firebase/auth";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
-import { auth } from "@/app/utils/firebase";
+import { auth, db } from "@/app/utils/firebase";
 
 const AuthContext = createContext();
 
@@ -14,7 +15,21 @@ export const AuthContextProvider = ({ children }) => {
 
   const signUp = async (email, password) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    setUser(userCredential.user);
+    const newUser = userCredential.user;
+    
+
+    try {
+      await setDoc(doc(db, "users", newUser.uid), {
+        email: newUser.email,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+    } catch (error) {
+      console.error("Error creating user document:", error);
+      
+    }
+    
+    setUser(newUser);
   };
 
   const signIn = async (email, password) => {
