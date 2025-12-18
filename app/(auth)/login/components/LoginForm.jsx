@@ -85,7 +85,16 @@ export default function LoginForm() {
           type="password"
           placeholder="Enter password"
         />
-
+        <div className="mt-2 text-right">
+          <button
+            type="button"
+            onClick={() => router.push('/reset-password')}
+            className="text-sm font-mono text-white/70 hover:text-blue-400 underline"
+          >
+            Forgot password?
+          </button>
+        </div>
+  
         <button 
           type="submit"
           className="w-full mt-6 inline-flex items-center justify-center font-mono px-4 py-2.5 text-sm border border-white text-white bg-transparent transition-all duration-300 hover:bg-white hover:text-black hover:border-pink-500 hover:shadow-pink-glow active:bg-white active:text-black"
