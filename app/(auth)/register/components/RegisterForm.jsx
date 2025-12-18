@@ -93,6 +93,24 @@ export default function RegisterForm() {
           placeholder="Enter password"
         />
 
+        <div className="mt-2 mb-4 text-sm font-mono text-white/70">
+          <p className="mb-2">Password must contain:</p>
+          <ul className="space-y-1">
+            <li className={`${password.length >= 8 ? 'text-green-400' : 'text-white/50'}`}>
+              {password.length >= 8 ? '✓' : '•'} &nbsp; At least 8 characters
+            </li>
+            <li className={`${/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>\/?]/.test(password) ? 'text-green-400' : 'text-white/50'}`}>
+              {/[!@#$%^&*()_+\-=[\]{};':"\\|,.<>\/?]/.test(password) ? '✓' : '•'} &nbsp; One special character
+            </li>
+            <li className={`${/[A-Z]/.test(password) ? 'text-green-400' : 'text-white/50'}`}>
+              {/[A-Z]/.test(password) ? '✓' : '•'} &nbsp; One uppercase letter
+            </li>
+            <li className={`${password && password === confirmPassword ? 'text-green-400' : 'text-white/50'}`}>
+              {password && password === confirmPassword ? '✓' : '•'} &nbsp; Passwords match
+            </li>
+          </ul>
+        </div>
+
         <Input
           label="Confirm Password"
           value={confirmPassword}
