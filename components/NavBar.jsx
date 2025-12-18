@@ -2,11 +2,13 @@
 
 // TODO: Standardize transition durations to 200ms to match the rest of the app 
 import { useContext } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AuthContext } from "@/contexts/AuthContext";
 
 export default function NavBar() {
   const { user, signOut } = useContext(AuthContext);
+  const router = useRouter();
 
   return (
     <nav className="border-b border-pink-400/20 bg-black/50 backdrop-blur-sm sticky top-0 z-50 px-8 py-4">
@@ -43,6 +45,7 @@ export default function NavBar() {
                 onClick={async () => {
                   try {
                     await signOut();
+                    router.push('/login');
                   } catch (error) {
                     console.error("Logout error:", error);
                   }

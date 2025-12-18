@@ -1,6 +1,7 @@
 "use client";
 
 import { useContext, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { collection, onSnapshot } from "firebase/firestore";
 import { AuthContext } from "@/contexts/AuthContext";
@@ -10,10 +11,16 @@ import Footer from "@/components/Footer";
 
 export default function NotesPage() {
   const { user, loading } = useContext(AuthContext);
+  const router = useRouter();
   const [notes, setNotes] = useState([]);
   const [notesLoading, setNotesLoading] = useState(true);
 
   useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+      return;
+    }
+
     if (!user) {
       setNotes([]);
       setNotesLoading(false);

@@ -5,6 +5,9 @@ import { useState, useEffect, useContext } from "react";
 import Link from "next/link";
 import { doc, setDoc, deleteDoc, onSnapshot, collection } from "firebase/firestore";
 import { db } from "@/app/utils/firebase";
+import { searchImages } from "@/app/utils/nasa";
+import NotesBadge from "@/components/NotesBadge";
+import FavoriteButton from "@/components/FavoriteButton";
 import { AuthContext } from "@/contexts/AuthContext";
 
 const GALLERY_RESULTS_PER_PAGE = 12;
@@ -24,23 +27,13 @@ export default function NASAImageGallery() {
       setError(null);
 
       try {
-        // Fetch planet images from NASA API
-        const response = await fetch(
-          "https://images-api.nasa.gov/search?media_type=image&q=planet"
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch NASA images");
-        }
-
-        const data = await response.json();
-
-        // Extract items from NASA API response
-        if (data.collection && data.collection.items) {
-          setImages(data.collection.items);
-        } else {
-          setImages([]);
-        }
+          const url = "https://images-api.nasa.gov/search?media_type=image&q=planet";
+          const data = await searchImages(url);
+          if (data && data.collection && data.collection.items) {
+            setImages(data.collection.items);
+          } else {
+            setImages([]);
+          }
       } catch (err) {
         setError(err.message || "An error occurred");
         setImages([]);
@@ -151,29 +144,16 @@ export default function NASAImageGallery() {
                 href={`/object/${encodeURIComponent(nasaId)}`}
                 className="border border-white/10 bg-black/30 hover:border-pink-500/50 hover:scale-[1.02] transition-all duration-200 overflow-hidden relative group"
               >
-                {user && hasNotes && (
-                  <div
-                    className="absolute top-3 left-3 text-xs font-mono px-2 py-1 border border-blue-400/60 text-blue-300 bg-black/60 group-hover:scale-105 transition-transform duration-150"
-                    title={notesMap[nasaId] ? (notesMap[nasaId].length > 160 ? notesMap[nasaId].slice(0, 160) + '…' : notesMap[nasaId]) : 'Notes'}
-                  >
-                    NOTES
-                  </div>
-                )}
+                {user && hasNotes && <NotesBadge text={notesMap[nasaId]} />}
                 {user && nasaId && (
-                  <button
-                    type="button"
+                  <FavoriteButton
+                    isFavorite={isFavorite}
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
                       toggleFavorite(nasaId, data, links);
                     }}
-                    className="absolute top-3 right-3 text-lg z-10 hover:scale-110 transition-transform duration-200"
-                    aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
-                  >
-                    <span className={`${isFavorite ? "text-yellow-400" : "text-white/30"} group-hover:text-yellow-400 transition-colors duration-200`}>
-                      {isFavorite ? "★" : "☆"}
-                    </span>
-                  </button>
+                  />
                 )}
                 {links.href && (
                   <img

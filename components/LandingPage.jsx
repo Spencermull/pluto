@@ -23,13 +23,13 @@ export default function LandingPage() {
                   href="/login"
                   className="px-8 py-3 font-mono text-sm border border-white text-white bg-transparent transition-all duration-200 hover:bg-white hover:text-black hover:border-pink-500 hover:scale-105"
                 >
-                  SIGN IN
+                  LOGIN
                 </Link>
                 <Link
                   href="/register"
                   className="px-8 py-3 font-mono text-sm border border-white text-white bg-transparent transition-all duration-200 hover:bg-white hover:text-black hover:border-blue-500 hover:scale-105"
                 >
-                  SIGN UP
+                  REGISTER
                 </Link>
               </div>
             </header>
