@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { AuthContext } from "@/contexts/AuthContext";
 import Input from "@/components/Input";
 import ErrorMessage from "@/components/ErrorMessage";
+import { auth } from "@/app/utils/firebase";
+import { setPersistence, browserLocalPersistence, browserSessionPersistence } from "firebase/auth";
 
 export default function LoginForm() {
   const [email, setEmail] = useState("");
@@ -11,6 +13,7 @@ export default function LoginForm() {
   const { signIn } = useContext(AuthContext);
   const [error, setError] = useState(null);
   const router = useRouter();
+  const [rememberMe, setRememberMe] = useState(true);
 
   const validateForm = () => {
     if (!email.trim()) {
@@ -56,6 +59,12 @@ export default function LoginForm() {
     }
 
     try {
+      try {
+        await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
+      } catch (pErr) {
+        //  if persistence can't be set continue to attempt sign in
+        console.warn("Failed to set persistence:", pErr);
+      }
       await signIn(email, password);
       router.push("/home");
     } catch (err) {
@@ -85,6 +94,17 @@ export default function LoginForm() {
           type="password"
           placeholder="Enter password"
         />
+        <div className="flex items-center gap-3 mt-3">
+          <input
+            id="rememberMe"
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+            className="w-4 h-4"
+            aria-label="Remember me"
+          />
+          <label htmlFor="rememberMe" className="text-white/80 font-mono text-sm">Remember me</label>
+        </div>
         <div className="mt-2 text-right">
           <button
             type="button"

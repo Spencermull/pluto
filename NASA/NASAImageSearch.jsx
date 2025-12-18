@@ -44,7 +44,9 @@ export default function NASAImageSearch() {
 
     const notesRef = collection(db, "users", user.uid, "notes");
     const unsubNotes = onSnapshot(notesRef, (snapshot) => {
-      const notes = Object.fromEntries(snapshot.docs.map((docSnap) => [docSnap.id, true]));
+      const notes = Object.fromEntries(
+        snapshot.docs.map((docSnap) => [docSnap.id, docSnap.data()?.text || ""])
+      );
       setNotesMap(notes);
     });
 
@@ -319,7 +321,10 @@ export default function NASAImageSearch() {
                   className="block border border-white/10 bg-black/30 p-6 hover:border-pink-500/60 hover:scale-[1.01] transition-all duration-200 relative group"
                 >
                   {user && hasNotes && (
-                    <div className="absolute top-3 left-3 text-xs font-mono px-2 py-1 border border-blue-400/60 text-blue-300 bg-black/60">
+                    <div
+                      className="absolute top-3 left-3 text-xs font-mono px-2 py-1 border border-blue-400/60 text-blue-300 bg-black/60 group-hover:scale-105 transition-transform duration-150"
+                      title={notesMap[nasaId] ? (notesMap[nasaId].length > 160 ? notesMap[nasaId].slice(0, 160) + '…' : notesMap[nasaId]) : 'Notes'}
+                    >
                       NOTES
                     </div>
                   )}

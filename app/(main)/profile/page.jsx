@@ -111,9 +111,9 @@ export default function ProfilePage() {
                 <div className="border border-white/10 bg-black/20 p-6">
                   <div className="text-white/40 font-mono text-xs uppercase tracking-wider mb-2">Notes</div>
                   <div className="text-3xl font-mono font-bold text-blue-400">{notesCount}</div>
-                  {notesCount > 0 && (
-                    <div className="text-white/60 font-mono text-xs mt-2">Saved across your objects</div>
-                  )}
+                    {notesCount > 0 && (
+                      <div className="text-white/60 font-mono text-xs mt-2">Saved across your objects — <a href="/notes" className="underline text-white/80 hover:text-blue-300">View notes →</a></div>
+                    )}
                 </div>
               </div>
 

@@ -14,6 +14,7 @@ export default function NASAImageGallery() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [favorites, setFavorites] = useState({});
+  const [notesMap, setNotesMap] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const { user } = useContext(AuthContext);
 
@@ -55,6 +56,7 @@ export default function NASAImageGallery() {
   useEffect(() => {
     if (!user) {
       setFavorites({});
+      setNotesMap({});
       return;
     }
 
@@ -64,7 +66,18 @@ export default function NASAImageGallery() {
       setFavorites(favs);
     });
 
-    return () => unsubscribe();
+    const notesRef = collection(db, "users", user.uid, "notes");
+    const unsubNotes = onSnapshot(notesRef, (snapshot) => {
+      const notes = Object.fromEntries(
+        snapshot.docs.map((docSnap) => [docSnap.id, docSnap.data()?.text || ""])
+      );
+      setNotesMap(notes);
+    });
+
+    return () => {
+      unsubscribe();
+      unsubNotes();
+    };
   }, [user]);
 
   const toggleFavorite = async (nasaId, data, links) => {
@@ -130,6 +143,7 @@ export default function NASAImageGallery() {
             const links = item.links && item.links[0] ? item.links[0] : {};
             const nasaId = data.nasa_id;
             const isFavorite = !!favorites[nasaId];
+            const hasNotes = !!notesMap[nasaId];
 
             return (
               <Link
@@ -137,6 +151,14 @@ export default function NASAImageGallery() {
                 href={`/object/${encodeURIComponent(nasaId)}`}
                 className="border border-white/10 bg-black/30 hover:border-pink-500/50 hover:scale-[1.02] transition-all duration-200 overflow-hidden relative group"
               >
+                {user && hasNotes && (
+                  <div
+                    className="absolute top-3 left-3 text-xs font-mono px-2 py-1 border border-blue-400/60 text-blue-300 bg-black/60 group-hover:scale-105 transition-transform duration-150"
+                    title={notesMap[nasaId] ? (notesMap[nasaId].length > 160 ? notesMap[nasaId].slice(0, 160) + '…' : notesMap[nasaId]) : 'Notes'}
+                  >
+                    NOTES
+                  </div>
+                )}
                 {user && nasaId && (
                   <button
                     type="button"

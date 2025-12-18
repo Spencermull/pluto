@@ -6,7 +6,8 @@ Pluto is a NASA space search engine that allows users to explore NASA’s open s
 
 ### Login / Authentication
 - Uses Firebase to authenticate users  
-- Firestore stores user data and pulls it into the relevant pages (persistent sessions)  
+- Firestore stores user data and pulls it into the relevant pages (persistent sessions) 
+- Remember me keeps a user logged in 
 - Users can register using email and password (minimal security for first release)  
 
 ### Search Objects / Images

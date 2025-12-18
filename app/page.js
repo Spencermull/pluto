@@ -1,5 +1,10 @@
 import LandingPage from "@/components/LandingPage";
+import AuthRedirect from "@/components/AuthRedirect";
 
 export default function Home() {
-  return <LandingPage />;
+  return (
+    <AuthRedirect>
+      <LandingPage />
+    </AuthRedirect>
+  );
 }
