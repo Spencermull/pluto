@@ -2,12 +2,11 @@
 
 import { useEffect, useState, useContext } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { doc, getDoc, setDoc } from "firebase/firestore";
 
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
-import { db } from "@/app/utils/firebase";
 import { AuthContext } from "@/contexts/AuthContext";
+import { useNotes } from "@/hooks/useNotes";
 
 // Detail page for a single NASA object identified by nasa_id
 export default function ObjectDetailPage() {
@@ -19,8 +18,9 @@ export default function ObjectDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [notes, setNotes] = useState("");
-  const [notesLoading, setNotesLoading] = useState(false);
   const [notesSaving, setNotesSaving] = useState(false);
+  
+  const { notesMap, saveNote, loading: notesLoading } = useNotes(user);
 
   useEffect(() => {
     if (!nasa_id) return;
@@ -65,41 +65,19 @@ export default function ObjectDetailPage() {
   const data = item && item.data && item.data[0] ? item.data[0] : {};
   const links = item && item.links && item.links[0] ? item.links[0] : {};
 
-  // Load existing notes for this object and user
+  // Initialize notes from notesMap when it's available
   useEffect(() => {
-    const loadNotes = async () => {
-      if (!user || !data.nasa_id) return;
-
-      setNotesLoading(true);
-      try {
-        const notesRef = doc(db, "users", user.uid, "notes", data.nasa_id);
-        const snap = await getDoc(notesRef);
-        if (snap.exists()) {
-          const noteData = snap.data();
-          setNotes(noteData.text || "");
-        } else {
-          setNotes("");
-        }
-      } catch (err) {
-        // Silently fail for now, might add error handling but probably not
-        console.log("Note load error:", err);
-      } finally {
-        setNotesLoading(false);
-      }
-    };
-
-    loadNotes();
-  }, [user, data.nasa_id]);
+    if (data.nasa_id && notesMap[data.nasa_id] !== undefined) {
+      setNotes(notesMap[data.nasa_id] || "");
+    }
+  }, [data.nasa_id, notesMap]);
 
   const handleSaveNotes = async () => {
     if (!user || !data.nasa_id) return;
 
     setNotesSaving(true);
     try {
-      const notesRef = doc(db, "users", user.uid, "notes", data.nasa_id);
-      await setDoc(notesRef, {
-        text: notes,
-      });
+      await saveNote(data.nasa_id, notes);
     } catch (err) {
       console.error("Error saving notes:", err);
     } finally {

@@ -1,21 +1,19 @@
 "use client";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { collection, onSnapshot } from "firebase/firestore";
 import { AuthContext } from "@/contexts/AuthContext";
-import { db } from "@/app/utils/firebase";
+import { useFavorites } from "@/hooks/useFavorites";
+import { useNotes } from "@/hooks/useNotes";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 
 export default function ProfilePage() {
   const { user, loading } = useContext(AuthContext);
   const router = useRouter();
-  const [favoritesCount, setFavoritesCount] = useState(0);
-  const [notesCount, setNotesCount] = useState(0);
-  const [recentFavorites, setRecentFavorites] = useState([]);
-  const [statsLoading, setStatsLoading] = useState(true);
+  const { favoritesList, loading: favLoading } = useFavorites(user);
+  const { notesCount } = useNotes(user);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -23,35 +21,10 @@ export default function ProfilePage() {
     }
   }, [user, loading, router]);
 
-  useEffect(() => {
-    if (!user) {
-      setFavoritesCount(0);
-      setNotesCount(0);
-      setRecentFavorites([]);
-      setStatsLoading(false);
-      return;
-    }
+  const favoritesCount = favoritesList.length;
+  const recentFavorites = favoritesList.slice(-3).reverse();
 
-    const favsRef = collection(db, "users", user.uid, "favorites");
-    const unsubFavs = onSnapshot(favsRef, (snapshot) => {
-      const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setFavoritesCount(items.length);
-      setRecentFavorites(items.slice(-3).reverse());
-      setStatsLoading(false);
-    });
-
-    const notesRef = collection(db, "users", user.uid, "notes");
-    const unsubNotes = onSnapshot(notesRef, (snapshot) => {
-      setNotesCount(snapshot.size);
-    });
-
-    return () => {
-      unsubFavs();
-      unsubNotes();
-    };
-  }, [user]);
-
-  if (loading || statsLoading) {
+  if (loading || favLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-white font-mono">Loading...</div>

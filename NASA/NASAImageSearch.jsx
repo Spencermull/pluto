@@ -2,14 +2,14 @@
 /*
 TODOS: Once many search types are implemented I am going to organize them into something like filtering or tabs unsure as of now.
 */
-import { useState, useEffect, useContext } from "react";
+import { useState, useContext } from "react";
 import Link from "next/link";
-import { doc, setDoc, deleteDoc, onSnapshot, collection } from "firebase/firestore";
-import { db } from "@/app/utils/firebase";
 import { searchImages } from "@/app/utils/nasa";
 import NotesBadge from "@/components/NotesBadge";
 import FavoriteButton from "@/components/FavoriteButton";
 import { AuthContext } from "@/contexts/AuthContext";
+import { useFavorites } from "@/hooks/useFavorites";
+import { useNotes } from "@/hooks/useNotes";
 
 const RESULTS_PER_PAGE = 10;
 
@@ -20,8 +20,6 @@ export default function NASAImageSearch() {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [hasSearched, setHasSearched] = useState(false);
-  const [favorites, setFavorites] = useState({});
-  const [notesMap, setNotesMap] = useState({});
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
     yearStart: "",
@@ -30,55 +28,8 @@ export default function NASAImageSearch() {
     sortBy: "relevance"
   });
   const { user } = useContext(AuthContext);
-
-  // Listen for favorites for the current user
-  useEffect(() => {
-    if (!user) {
-      setFavorites({});
-      setNotesMap({});
-      return;
-    }
-
-    const favsRef = collection(db, "users", user.uid, "favorites");
-    const unsubFavs = onSnapshot(favsRef, (snapshot) => {
-      const favs = Object.fromEntries(snapshot.docs.map((docSnap) => [docSnap.id, true]));
-      setFavorites(favs);
-    });
-
-    const notesRef = collection(db, "users", user.uid, "notes");
-    const unsubNotes = onSnapshot(notesRef, (snapshot) => {
-      const notes = Object.fromEntries(
-        snapshot.docs.map((docSnap) => [docSnap.id, docSnap.data()?.text || ""])
-      );
-      setNotesMap(notes);
-    });
-
-    return () => {
-      unsubFavs();
-      unsubNotes();
-    };
-  }, [user]);
-
-  const toggleFavorite = async (nasaId, data, links) => {
-    if (!user || !nasaId) return;
-
-    const favRef = doc(db, "users", user.uid, "favorites", nasaId);
-    const isFav = !!favorites[nasaId];
-
-    try {
-      if (isFav) {
-        await deleteDoc(favRef);
-      } else {
-        await setDoc(favRef, {
-          nasa_id: nasaId,
-          title: data.title || "N/A",
-          thumbnail: links?.href || null,
-        });
-      }
-    } catch (err) {
-      console.error("Error updating favorite:", err);
-    }
-  };
+  const { favorites, toggleFavorite } = useFavorites(user);
+  const { notesMap } = useNotes(user);
 
   const buildSearchUrl = (searchQuery) => {
     let url = `https://images-api.nasa.gov/search?q=${encodeURIComponent(searchQuery)}&media_type=image`;
@@ -316,7 +267,16 @@ export default function NASAImageSearch() {
                   className="block border border-white/10 bg-black/30 p-6 hover:border-pink-500/60 hover:scale-[1.01] transition-all duration-200 relative group"
                 >
                   {user && hasNotes && <NotesBadge text={notesMap[nasaId]} />}
-                  {user && nasaId && <FavoriteButton isFavorite={isFavorite} onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFavorite(nasaId, data, links); }} />}
+                  {user && nasaId && (
+                    <FavoriteButton
+                      isFavorite={isFavorite}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleFavorite(nasaId, data, links);
+                      }}
+                    />
+                  )}
                   <div className="flex gap-6">
                     {links.href && (
                       <img

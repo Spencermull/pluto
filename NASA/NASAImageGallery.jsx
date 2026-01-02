@@ -3,12 +3,12 @@
 // TODO: Maybe add filtering by planet type or date range later
 import { useState, useEffect, useContext } from "react";
 import Link from "next/link";
-import { doc, setDoc, deleteDoc, onSnapshot, collection } from "firebase/firestore";
-import { db } from "@/app/utils/firebase";
 import { searchImages } from "@/app/utils/nasa";
 import NotesBadge from "@/components/NotesBadge";
 import FavoriteButton from "@/components/FavoriteButton";
 import { AuthContext } from "@/contexts/AuthContext";
+import { useFavorites } from "@/hooks/useFavorites";
+import { useNotes } from "@/hooks/useNotes";
 
 const GALLERY_RESULTS_PER_PAGE = 12;
 
@@ -16,10 +16,10 @@ export default function NASAImageGallery() {
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [favorites, setFavorites] = useState({});
-  const [notesMap, setNotesMap] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const { user } = useContext(AuthContext);
+  const { favorites, toggleFavorite } = useFavorites(user);
+  const { notesMap } = useNotes(user);
 
   useEffect(() => {
     const fetchGallery = async () => {
@@ -44,55 +44,6 @@ export default function NASAImageGallery() {
 
     fetchGallery();
   }, []);
-
-  // Listen for favorites for the current user
-  useEffect(() => {
-    if (!user) {
-      setFavorites({});
-      setNotesMap({});
-      return;
-    }
-
-    const favsRef = collection(db, "users", user.uid, "favorites");
-    const unsubscribe = onSnapshot(favsRef, (snapshot) => {
-      const favs = Object.fromEntries(snapshot.docs.map((docSnap) => [docSnap.id, true]));
-      setFavorites(favs);
-    });
-
-    const notesRef = collection(db, "users", user.uid, "notes");
-    const unsubNotes = onSnapshot(notesRef, (snapshot) => {
-      const notes = Object.fromEntries(
-        snapshot.docs.map((docSnap) => [docSnap.id, docSnap.data()?.text || ""])
-      );
-      setNotesMap(notes);
-    });
-
-    return () => {
-      unsubscribe();
-      unsubNotes();
-    };
-  }, [user]);
-
-  const toggleFavorite = async (nasaId, data, links) => {
-    if (!user || !nasaId) return;
-
-    const favRef = doc(db, "users", user.uid, "favorites", nasaId);
-    const isFav = !!favorites[nasaId];
-
-    try {
-      if (isFav) {
-        await deleteDoc(favRef);
-      } else {
-        await setDoc(favRef, {
-          nasa_id: nasaId,
-          title: data.title || "N/A",
-          thumbnail: links?.href || null,
-        });
-      }
-    } catch (err) {
-      console.error("Error updating favorite:", err);
-    }
-  };
 
   if (loading) {
     return (

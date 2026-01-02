@@ -1,62 +1,27 @@
 "use client";
 
 // TODO: Replace <a> tags with Next.js Link components for better client-side navigation
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { collection, onSnapshot } from "firebase/firestore";
 
 import { AuthContext } from "@/contexts/AuthContext";
-import { db } from "@/app/utils/firebase";
+import { useFavorites } from "@/hooks/useFavorites";
+import { useNotes } from "@/hooks/useNotes";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 
 export default function FavoritesPage() {
   const { user, loading } = useContext(AuthContext);
   const router = useRouter();
-
-  const [favorites, setFavorites] = useState([]);
-  const [favLoading, setFavLoading] = useState(true);
-  const [notesMap, setNotesMap] = useState({});
+  const { favoritesList, loading: favLoading } = useFavorites(user);
+  const { notesMap } = useNotes(user);
 
   useEffect(() => {
     if (!loading && !user) {
       router.push("/login");
     }
   }, [user, loading, router]);
-
-  useEffect(() => {
-    if (!user) {
-      setFavorites([]);
-      setNotesMap({});
-      setFavLoading(false);
-      return;
-    }
-
-    const favsRef = collection(db, "users", user.uid, "favorites");
-    const unsubscribe = onSnapshot(
-      favsRef,
-      (snapshot) => {
-        const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        setFavorites(items);
-        setFavLoading(false);
-      },
-      () => setFavLoading(false)
-    );
-
-    const notesRef = collection(db, "users", user.uid, "notes");
-    const unsubNotes = onSnapshot(notesRef, (snapshot) => {
-      const notes = Object.fromEntries(
-        snapshot.docs.map((docSnap) => [docSnap.id, docSnap.data()?.text || ""])
-      );
-      setNotesMap(notes);
-    });
-
-    return () => {
-      unsubscribe();
-      unsubNotes();
-    };
-  }, [user]);
 
   if (loading || favLoading) {
     return (
@@ -79,13 +44,13 @@ export default function FavoritesPage() {
             Favourites
           </h1>
 
-          {favorites.length === 0 ? (
+          {favoritesList.length === 0 ? (
             <div className="text-white/60 font-mono text-center py-12 border border-white/10 bg-black/30">
               No favourites yet.
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {favorites.map((fav) => (
+              {favoritesList.map((fav) => (
                   <Link
                     key={fav.id}
                     href={`/object/${encodeURIComponent(fav.id)}`}
